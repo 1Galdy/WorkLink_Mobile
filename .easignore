@@ -1,0 +1,14 @@
+# Ignore fichiers système
+
+**/AppData/**
+**/Temp/**
+**/Roaming/**
+**/Cache/**
+*.tmp
+*.log
+*.cpuprofile.json
+
+# Ignore VSCode data
+
+.vscode/
+.history/
