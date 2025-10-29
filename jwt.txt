@@ -1,0 +1,482 @@
+Voici une explication complète, avec des scénarios, du fonctionnement d’un **JWT + refresh token**, les pièges, les cas limites, et un exemple en JavaScript commenté, puis un schéma récapitulatif. N’hésite pas à me demander des variantes (ex : pour mobile, pour micro‑services, etc.).
+
+---
+
+## Concepts de base : JWT, access token, refresh token
+
+### JWT (JSON Web Token)
+
+Un JWT est une chaîne encodée en trois parties :
+
+```
+HEADER . PAYLOAD . SIGNATURE
+```
+
+* **HEADER** : décrit l’algorithme de signature (ex : HS256)
+* **PAYLOAD (claims)** : des données (claims) utiles — par exemple `sub` (user id), `iat` (issued at), `exp` (expiration), éventuellement des rôles, etc.
+* **SIGNATURE** : signature cryptographique sur header + payload, pour garantir l’intégrité.
+
+Le JWT est auto‑contenant : quand le serveur reçoit un JWT, il peut vérifier la signature + les dates (`exp`, `nbf`) + éventuellement d’autres contraintes, sans avoir besoin de consulter la base de données (stateless).
+
+Mais cette nature stateless a un inconvénient : **on ne peut pas révoquer facilement un JWT** une fois émis, sauf en maintenant une “liste noire” ou en vérifiant un identifiant (`jti`) stocké côté serveur.
+
+### Access Token vs Refresh Token
+
+On utilise en général deux types de jetons :
+
+* **Access token (JWT)** : jeton de courte durée (par exemple 10 à 30 minutes, selon besoin). Il est envoyé avec chaque requête vers les ressources protégées (API).
+* **Refresh token** : jeton de plus longue durée (par exemple plusieurs jours, semaines). Il ne sert **qu’à** obtenir un nouveau access token quand celui-ci expire. Il ne doit pas être utilisé directement pour accéder aux ressources.
+
+Pourquoi ce découpage ?
+
+* Si un access token est compromis, l’attaquant ne pourra l’utiliser que pour une période limitée (jusqu’à l’expiration).
+* Le refresh token permet à l’utilisateur de rester “connecté” sans avoir à ressaisir ses identifiants souvent.
+* Le refresh token peut être stocké de façon sécurisée, associé à un état serveur (base de données) pour permettre la révocation / rotation / suivi.
+
+### Stockage sécurisé
+
+* L’**access token** est souvent stocké en mémoire (variable JS) ou dans un cookie non accessible via JS (HttpOnly) — mais généralement on évite de le stocker à long terme (localStorage) pour limiter l’exposition.
+* Le **refresh token** est plus critique à protéger. On le stocke souvent dans un cookie HttpOnly, `Secure`, `SameSite=Strict` (ou `Lax` selon besoin), pour qu’il ne soit pas accessible via JavaScript (résistance aux attaques XSS).
+* Côté serveur, le refresh token (ou son identifiant) est stocké en base de données ou dans un cache, avec état (valide / révoqué), date d’expiration, etc. Cela permet de le révoquer manuellement (logout, compromission, changement de mot de passe). Cf. “Rotation des refresh tokens” pour limiter les abus. ([Medium][1])
+
+---
+
+## Flux typique : de la connexion à l’accès renouvelé
+
+On va décrire le cycle complet, et ensuite passer aux cas extrêmes / scénarios.
+
+### Flux “happy path” (fonctionnement normal)
+
+1. **Login / authentification**
+   L’utilisateur envoie ses identifiants (ex : email/password) au serveur (endpoint `/login`).
+
+2. **Génération des tokens**
+   Le serveur :
+
+   * Vérifie les identifiants.
+   * Crée un access token JWT avec des claims (ex : `userId`, rôles) et une courte expiration (ex : `exp = now + 15 min`).
+   * Crée un refresh token (souvent opaque, ou JWT mais vérifié côté serveur), avec expiration plus longue (ex : `7 jours`) et l’enregistre dans la base de données (avec métadonnées : userId, date, statut valide / révoqué, device, ip, etc.).
+   * Envoie à l’utilisateur l’access token, et stocke le refresh token (souvent via cookie HttpOnly).
+
+3. **Appels API avec access token**
+   Pour chaque requête vers une route protégée, le client envoie l’access token (par exemple dans l’en‑tête `Authorization: Bearer <token>` ou via cookie).
+   Le serveur :
+
+   * Vérifie la signature du JWT.
+   * Vérifie les claims (expiration, destinataire, etc.).
+   * Éventuellement vérifie qu’il n’est pas “révoqué” (ex : via liste noire ou via `jti`).
+   * Si tout est bon, répond.
+
+4. **Expiration de l’access token**
+   Quand l’access token arrive à expiration, une requête avec ce token provoque une erreur (HTTP `401 Unauthorized` ou `403` selon choix).
+
+5. **Renouvellement via refresh token**
+   Le client (application ou frontend) intercepte ce 401, puis envoie une requête vers l’endpoint `/auth/refresh`, sans (ou en plus) envoyer l’access token, mais avec le refresh token (souvent dans le cookie HttpOnly).
+   Côté serveur :
+
+   * Vérifie que le refresh token est valide (existe en base, non révoqué, non expiré).
+   * Si rotation : invalide l’ancien refresh token, en génère un nouveau (mise à jour en base).
+   * Génère un nouveau access token (et souvent un nouveau refresh token, si rotation).
+   * Répond avec le nouvel access token (et refresh token mis à jour).
+
+6. **Le client réessaie la requête initiale**, ou continue les appels API avec le nouveau access token.
+
+7. **Logout, révocation**
+   Quand l’utilisateur se déconnecte ou modifie son mot de passe, le serveur marque le refresh token comme révoqué ou le supprime de la base, et éventuellement ajoute le `jti` de l’access token à une liste noire jusqu’à expiration.
+
+---
+
+## Scénarios, cas limites et questions que tu as posées
+
+Maintenant, je vais répondre point par point à tes questions, ajouter d’autres scénarios, et clarifier les comportements selon les situations.
+
+### Ton scénario : “access token stocké en cookie, refresh token en BD”
+
+> *“si l’utilisateur est connecté on a l’access_token qui est stocké en cookie et le refresh en bdd au niveau du back du coup pour que l’access soit mis à jour par le refresh il faut ? que l’access expire ?”*
+
+Oui, en général le renouvellement n’a lieu que quand l’access token est expiré (ou proche de l’expiration). Si l’access token est toujours valide, on ne touche à rien. Le client peut aussi surveiller le champ `exp` du token pour anticiper le rafraîchissement juste avant l’expiration.
+
+> *“et si l’access a été supprimé ou modifié quel comportement on observe sur la page le site ou l’application ?”*
+
+* Si l’access token est totalement supprimé (par exemple le cookie est effacé ou inaccessible), les requêtes suivantes vers l’API échoueront (401) parce qu’aucun token valide n’est envoyé.
+* Si l’access token est modifié (corrompu ou modifié manuellement), la signature sera invalide → le serveur rejette (401 / 403).
+  Dans les deux cas, le frontend devra déclencher une action de rafraîchissement (via refresh token) ou rediriger vers le login.
+
+> *“Est-ce qu’avant de rafraîchir le token il doit y avoir vérification de l’access ? En parlant de ça comment s’utilise le refresh et comment met-il à jour l’access ?”*
+
+Oui, typiquement le frontend (ou un middleware réseau) détecte si l’access token est expiré (via `exp`) ou si une requête a renvoyé une erreur 401 indiquant “token expiré / invalide”, et dans ce cas appelle `/auth/refresh`. Le serveur alors vérifie le refresh token, et si c’est valide, renvoie un nouvel access token (et souvent un nouveau refresh token si rotation). Le frontend remplace l’ancien access token par le nouveau, puis relance la requête initiale.
+
+Tu peux considérer un “intercepteur” HTTP (ex : pour Axios, Fetch wrapper) qui dans le cas d’un 401 tente le rafraîchissement et retente la requête.
+
+Je vais donner un exemple complet en JavaScript (Node.js pour le backend, et frontend simple) pour illustrer tout ça.
+
+---
+
+## Exemple en JavaScript (Node.js + frontend)
+
+### Backend (Express + `jsonwebtoken`, stockage refresh en base simulée)
+
+```js
+// backend/auth.js
+const express = require('express');
+const jwt = require('jsonwebtoken');
+const router = express.Router();
+
+// Secrets (ne les expose pas dans le code en production, utilise des variables d’environnement)
+const ACCESS_TOKEN_SECRET = "mon_secret_access";
+const REFRESH_TOKEN_SECRET = "mon_secret_refresh";
+
+// Simulation de base de données pour les refresh tokens
+const refreshTokenDB = new Map();  
+// refreshTokenDB : clé = token, valeur = { userId, expiresAt, isRevoked, deviceInfo, ... }
+
+// Fonction pour générer un access token
+function generateAccessToken(userId) {
+  return jwt.sign(
+    { userId }, 
+    ACCESS_TOKEN_SECRET, 
+    { expiresIn: '15m' }
+  );
+}
+
+// Fonction pour générer un refresh token
+function generateRefreshToken(userId) {
+  // On pourrait inclure un identifiant unique (jti) dans le refresh token pour rotation
+  const token = jwt.sign(
+    { userId }, 
+    REFRESH_TOKEN_SECRET, 
+    { expiresIn: '7d' }
+  );
+  // Enregistrer en “BDD”
+  const expiresAt = Date.now() + 7 * 24 * 60 * 60 * 1000; // en ms
+  refreshTokenDB.set(token, { userId, expiresAt, isRevoked: false });
+  return token;
+}
+
+// LOGIN endpoint
+router.post('/login', (req, res) => {
+  const { username, password } = req.body;
+  // TODO : authentifier l’utilisateur (vérifier mot de passe, etc.)
+  const userId = "user123"; // exemple
+
+  const accessToken = generateAccessToken(userId);
+  const refreshToken = generateRefreshToken(userId);
+
+  // On peut envoyer le refresh token dans un cookie HttpOnly
+  res.cookie('refreshToken', refreshToken, {
+    httpOnly: true,
+    secure: true,   // https uniquement
+    sameSite: 'Strict', 
+    maxAge: 7 * 24 * 60 * 60 * 1000
+  });
+  res.json({ accessToken });
+});
+
+// Middleware pour vérifier l’access token
+function authenticateJWT(req, res, next) {
+  const authHeader = req.headers['authorization'];
+  if (!authHeader) {
+    return res.sendStatus(401);
+  }
+  const token = authHeader.split(' ')[1];
+  jwt.verify(token, ACCESS_TOKEN_SECRET, (err, payload) => {
+    if (err) {
+      return res.sendStatus(401);
+    }
+    // Optionnel : vérifier un “jti” qu’il n’est pas dans la blacklist
+    req.userId = payload.userId;
+    next();
+  });
+}
+
+// Endpoint protégé exemple
+router.get('/protected', authenticateJWT, (req, res) => {
+  res.json({ message: `Hello user ${req.userId}` });
+});
+
+// Endpoint de refresh
+router.post('/refresh', (req, res) => {
+  // On attend le refresh token via cookie
+  const refreshToken = req.cookies.refreshToken;
+  if (!refreshToken) {
+    return res.sendStatus(401);
+  }
+  // Vérifier que le token existe en DB
+  const tokenRecord = refreshTokenDB.get(refreshToken);
+  if (!tokenRecord) {
+    return res.sendStatus(403);
+  }
+  if (tokenRecord.isRevoked || tokenRecord.expiresAt < Date.now()) {
+    return res.sendStatus(403);
+  }
+  // Vérifier signature du token
+  jwt.verify(refreshToken, REFRESH_TOKEN_SECRET, (err, payload) => {
+    if (err) {
+      return res.sendStatus(403);
+    }
+    const userId = payload.userId;
+
+    // Optionnel : rotation du refresh token
+    // Révoquer l’ancien
+    tokenRecord.isRevoked = true;
+    // Générer un nouveau
+    const newRefreshToken = generateRefreshToken(userId);
+
+    // Générer un nouvel access token
+    const newAccessToken = generateAccessToken(userId);
+
+    // Répondre avec le nouvel access token + définir le nouveau cookie refresh token
+    res.cookie('refreshToken', newRefreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'Strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000
+    });
+    return res.json({ accessToken: newAccessToken });
+  });
+});
+
+// Logout : révoquer le refresh token
+router.post('/logout', (req, res) => {
+  const token = req.cookies.refreshToken;
+  if (token) {
+    const rec = refreshTokenDB.get(token);
+    if (rec) {
+      rec.isRevoked = true;
+    }
+  }
+  // On supprime le cookie
+  res.clearCookie('refreshToken');
+  res.sendStatus(204);
+});
+
+module.exports = router;
+```
+
+Commentaires ligne par ligne :
+
+* `refreshTokenDB` : simulation d’un stockage des refresh tokens (ceci serait une base réelle en production).
+* `generateAccessToken` : on signe un JWT avec un `userId` et une durée courte.
+* `generateRefreshToken` : on signe un token plus long, et on l’enregistre en DB avec métadonnées.
+* `/login` : après authentification, on crée les deux tokens, on renvoie l’access token en JSON, et on stocke le refresh token dans un cookie HttpOnly sécurisé.
+* `authenticateJWT` : middleware pour protéger les routes, vérifie le JWT (signature, expiration).
+* `/protected` : route d’exemple protégée.
+* `/refresh` : il lit le refresh token depuis le cookie, vérifie qu’il est connu, non révoqué, non expiré, puis vérifie la signature. Si OK, il effectue une rotation (révocation + nouveau refresh token), crée un nouvel access token, renvoie le tout (et met à jour le cookie).
+* `/logout` : révoque le refresh token côté serveur et clear le cookie.
+
+### Frontend (simplifié, Fetch + intercepteur de requêtes)
+
+```js
+// frontend/authClient.js
+
+let currentAccessToken = null;
+
+// Fonction pour appeler une API protégée
+async function callApiWithAuth(url, options = {}) {
+  if (!options.headers) options.headers = {};
+  options.headers['Authorization'] = `Bearer ${currentAccessToken}`;
+  let resp = await fetch(url, options);
+  if (resp.status === 401) {
+    // Peut-être token expiré — tenter refresh
+    const success = await tryRefreshToken();
+    if (success) {
+      // refaire la requête avec nouveau token
+      options.headers['Authorization'] = `Bearer ${currentAccessToken}`;
+      resp = await fetch(url, options);
+    }
+  }
+  return resp;
+}
+
+async function tryRefreshToken() {
+  // Appel au backend pour rafraîchir
+  const resp = await fetch('/auth/refresh', {
+    method: 'POST',
+    credentials: 'include' // pour envoyer le cookie HttpOnly
+  });
+  if (!resp.ok) {
+    // Le rafraîchissement a échoué : l’utilisateur doit se reconnecter
+    return false;
+  }
+  const data = await resp.json();
+  currentAccessToken = data.accessToken;
+  return true;
+}
+
+async function login(username, password) {
+  const resp = await fetch('/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify({ username, password })
+  });
+  if (!resp.ok) throw new Error('Login failed');
+  const data = await resp.json();
+  currentAccessToken = data.accessToken;
+}
+
+// Exemple d’usage
+(async () => {
+  await login('alice', 'password123');
+  const resp = await callApiWithAuth('/protected');
+  const json = await resp.json();
+  console.log(json);
+})();
+```
+
+Explications :
+
+* `currentAccessToken` : variable JS contenant l’access token courant (non persistant localement).
+* `callApiWithAuth` : fonction wrapper pour les appels API — elle injecte l’`Authorization` header, et si la réponse est 401, elle tente un refresh (via `tryRefreshToken`) puis recommence la requête.
+* `tryRefreshToken` : appelle `/auth/refresh` avec `credentials: 'include'` pour envoyer le cookie HttpOnly, lit la réponse contenant un nouveau access token, et met à jour `currentAccessToken`.
+* `login` : appelle `/auth/login` pour obtenir l’access token initial, et grâce au cookie configuré, le refresh token est mis en cookie par le backend.
+
+---
+
+## Réponses plus détaillées à tes questions + scénarios avancés
+
+### Faut-il attendre que l’access token expire pour le rafraîchir ?
+
+Pas nécessairement *exactement* à l’expiration. Le frontend peut surveiller l’expiration via le claim `exp` (si décodé) et faire le rafraîchissement quelques minutes avant qu’il n’expire, afin d’éviter les erreurs 401. Mais souvent, on attend le 401, car rafraîchir trop tôt de façon inutile peut générer du trafic.
+
+### Si l’access token est supprimé / modifié
+
+* Suppression : pas de token dans les requêtes → le serveur renvoie 401. Le frontend tente de rafraîchir ou redirige vers login.
+* Modification non valide : signature invalide → 401. Même réaction.
+
+### Vérifier l’access token avant de rafraîchir ?
+
+Oui, on vérifie d’abord le token (localement ou via l’erreur 401). On ne “rafraîchit” que si le token est expiré ou invalide. Si un token est encore valide, inutile de rafraîchir.
+
+Mais on ne se fie pas uniquement au côté frontend : le serveur refusera tout access token invalide ou non signé.
+
+### Comment le refresh met à jour l’access ?
+
+Le serveur génère un *nouveau* access token (généralement signé avec un nouveau `iat` et `exp`), et renvoie ce token au client (et s’il y a rotation, il renvoie aussi un nouveau refresh token). Le client remplace l’ancien access token par le nouveau. Toutes les requêtes ultérieures utiliseront ce nouveau token.
+
+### Scénarios supplémentaires auxquels penser
+
+1. **Refresh token compromis / volé**
+
+   * Si l’attaquant a un refresh token valide, il peut demander de nouveaux access tokens.
+   * Pour limiter ce risque, on fait **la rotation des refresh tokens** : chaque fois qu’on utilise un refresh token, on invalide l’ancien et en génère un nouveau. Si quelqu’un essaie de réutiliser un ancien refresh token, le serveur le détectera comme “révoqué” et refusera. ([Medium][1])
+   * On peut aussi surveiller des anomalies (usage depuis IP différente, user agent différent) et forcer re-authentification si suspicion. ([Medium][1])
+
+2. **Session expirée / inactivité prolongée**
+
+   * Si l’utilisateur ne fait pas d’activité pendant très longtemps (au-delà de la validité du refresh token), il devra se reconnecter.
+   * On peut appliquer une expiration absolue maximale (par exemple 30 jours), même avec rotation continue.
+
+3. **Revocation / logout / changement de mot de passe**
+
+   * En logout, on révoque le refresh token (et potentiellement toute la session).
+   * Si l’utilisateur change son mot de passe ou qu’on détecte une compromission, on peut invalider tous les refresh tokens de l’utilisateur (via une table ou un champ `invalidate_before` dans la table utilisateur).
+   * On peut ajouter le `jti` de l’access token à une liste noire jusqu’à son expiration pour éviter son usage résiduel.
+
+4. **Multiple sessions / devices**
+
+   * Un utilisateur peut être connecté sur plusieurs appareils. On associe chaque refresh token à un appareil / session (via un identifiant `deviceId` ou `sessionId`).
+   * Si un token d’un appareil est révoqué, les autres restent actifs.
+
+5. **Token replay / double usage de refresh token**
+
+   * Si deux requêtes concurrentes utilisent le même refresh token (avant que la rotation soit enregistrée), il faut gérer le cas : l’un réussit, l’autre doit être détecté comme “reuse” et déclencher une alerte ou révoquer la session entière.
+   * On peut stocker un nonce dans le refresh token pour détecter le reuse. ([Medium][2])
+
+6. **Synchronisation / perte du refresh token côté client**
+
+   * Si lors d’un refresh le client ne reçoit pas le nouveau refresh token (ex : demande interrompue), alors le token précédent est déjà révoqué, et le client est bloqué jusqu’à re-authentification.
+   * Il faut gérer ce scénario (ex : forcer le login) avec soin.
+
+7. **Rotation synchronisée entre microservices / cluster**
+
+   * Si le backend est distribuée, la rotation et la gestion des refresh tokens doivent être cohérentes (stockage centralisé, cache partagé).
+   * L’invalidation en temps réel (blacklist) doit être distribuée (ex : via Redis).
+
+8. **Utilisation de scopes / claims minimes**
+
+   * Le JWT ne doit pas contenir trop de données sensibles ou volumineuses (limiter les claims).
+   * Si des permissions changent, tu ne veux pas que des anciens JWT continuent à accorder l’accès — ici, une version du token (claim `ver`) peut être stockée dans la base, et vérifiée sur chaque requête.
+
+9. **Refresh token sous forme de JWT ou opaque**
+
+   * On peut faire un refresh token “opaque” (ex : une chaîne aléatoire), ce qui force une vérification en base.
+   * Ou un refresh token JWT, mais alors il faut vérifier qu’il correspond à une version stockée ou non révoquée.
+   * L’approche opaque est souvent recommandée pour simplifier la révocation. ([codingeasypeasy.com][3])
+
+10. **Limites de longueur de cookie / domaine / sous-domaines**
+
+    * Si l’API est sur un sous-domaine (api.example.com) et le frontend sur un autre (app.example.com), il faut bien configurer le domaine du cookie (ex: `.example.com`) et le `SameSite`.
+    * Le cookie a une taille maximale, donc les tokens ne doivent pas être trop volumineux.
+
+---
+
+## Réponses résumées à tes questions avec clarté
+
+| Question                                                                       | Réponse succincte                                                                                            |
+| ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------ |
+| Pour que l’access token soit mis à jour par le refresh, faut-il qu’il expire ? | Oui, le rafraîchissement est déclenché quand l’access token est expiré ou devient invalide.                  |
+| Que se passe-t-il si l’access token est supprimé / modifié ?                   | Les requêtes API échouent (401), le frontend tente de rafraîchir ou redirige vers login.                     |
+| Faut-il vérifier l’access avant de rafraîchir ?                                | Oui, on vérifie (exp, erreur 401) ; on ne raffraîchit pas inutilement si le token est encore valide.         |
+| Comment le refresh met-il à jour l’access ?                                    | Le serveur génère un nouvel access token (et souvent un nouveau refresh token), le client remplace l’ancien. |
+| Que faire en logout ou changement de mot de passe ?                            | Révoquer le refresh token (et potentiellement les jetons d’autres sessions), supprimer cookie.               |
+| Que faire si un refresh token est compromis ?                                  | Rotation des tokens, vérification de reuse, surveillance d’anomalies, révocation.                            |
+
+---
+
+## Schéma global du flux (séquentiel)
+
+Voici un schéma textuel (tu peux le convertir en visuel) :
+
+```
+[Client (frontend)]                            [Serveur / API]
+
+   Login (username/password) → /login ─────────────►
+                                                   Vérification des identifiants
+                                                   Génération :
+                                                    • accessToken (JWT, court terme)
+                                                    • refreshToken (stocké en DB)
+                                                   Réponse :
+                                                    • accessToken dans le corps
+                                                    • refreshToken dans cookie HttpOnly
+
+   ←──────────── réponse ──────────────
+
+Client stocke accessToken en mémoire
+
+--- Durant navigation normale ---
+Client → requêtes API protégées avec `Authorization: Bearer accessToken`
+Serveur vérifie : signature, exp, claims → si OK, répond
+
+--- Si accessToken expiré ou invalide ---
+Client reçoit 401 → appelle `/auth/refresh` (avec cookie contenant refreshToken)
+Serveur :
+  • Vérifie le refreshToken : existence, non révoqué, non expiré
+  • Vérifie la signature
+  • (Rotation) : révoque l’ancien, en génère un nouveau
+  • Crée un nouvel accessToken
+  • Renvoie nouvel accessToken + nouveau refreshToken (dans cookie)
+Client reçoit, stocke le nouvel accessToken, et relance la requête initiale
+
+--- Logout ou révocation explicite ---
+Client appelle `/auth/logout`
+Serveur marque le refreshToken comme révoqué / supprime
+Serveur clear cookie refreshToken
+Client supprime l’accessToken
+
+--- Cas particuliers / erreurs ---
+- Si refreshToken est invalide ou expiré → `/auth/refresh` renvoie 403 → forcer le login
+- Si refreshToken utilisé deux fois (replay) → détecter et révoquer
+- Si utilisateur change mot de passe ou sécurité modifiée → révoquer tous les tokens
+- Si usage inhabituel (heure / IP) → alerter, forcer re-authentification
+```
+
+Tu peux visualiser cela comme un cycle “login → utiliser access → refresh → logout”.
+
+---
+
+Si tu veux, je peux te générer un **schéma visuel (ex : diagramme)** en SVG ou image, pour que ce soit clair dans un slide. Veux‑tu que je le fasse ?
+
+[1]: https://medium.com/node-js-cybersecurity/refresh-tokens-are-trickier-than-many-developers-think-46190800ff92?utm_source=chatgpt.com "Refresh Tokens Are Trickier Than Many Developers Think | by Sergey Egorenkov | CyberSecurity | Medium"
+[2]: https://choudharycodes.medium.com/title-securing-your-web-applications-with-jwt-authentication-and-refresh-token-rotation-63a9aa1a4b12?utm_source=chatgpt.com "Securing Your Web Applications with JWT Authentication and Refresh Token Rotation | by Chetan Choudhary | Medium"
+[3]: https://www.codingeasypeasy.com/blog/jwt-authentication-with-refresh-tokens-in-express-secure-and-scalable?utm_source=chatgpt.com "JWT Authentication with Refresh Tokens in Express: Secure and Scalable | CodingEasyPeasy"

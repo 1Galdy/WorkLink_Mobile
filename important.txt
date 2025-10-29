@@ -1,0 +1,24 @@
+{/* <Stack screenOptions={{
+        headerShown: false, // ❌ cache tous les headers du stack
+    }}
+/>; */}
+
+
+// Passer les options dans le layout qui englobe les pages
+
+{/* <Stack
+      screenOptions={{
+        // options globales par défaut
+        headerShown: true,
+        headerStyle: { backgroundColor: "#eee" },
+      }}
+    >*/}
+      {/* Override pour une page spécifique */}
+      {/*<Stack.Screen
+        name="start"
+        options={{
+          headerShown: false,  // cacher header pour cette page
+          title: "Page de démarrage",
+        }}
+      />
+    </Stack> */}
