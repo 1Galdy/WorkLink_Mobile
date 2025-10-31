@@ -17,6 +17,13 @@ export default function ProfilLayout() {
           title: 'Informations',
         }}
       />
+      <Stack.Screen
+        name="langues/index"
+        options={{
+          headerShown: true,     // Afficher header pour /profil/langues
+          title: 'Changer de Langues',
+        }}
+      />
     </Stack>
   );
 }

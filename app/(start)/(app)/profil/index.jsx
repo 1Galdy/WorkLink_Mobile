@@ -13,6 +13,7 @@ export default function Profil() {
     >
       <Text>Pofil page</Text>
       <Link href="/profil/informations" style={{color: "blue"}}>Informations</Link>
+      <Link href="/profil/langues" style={{color: "blue"}}>Langues</Link>
       <Link href="/(auth)/logout" style={{color: "red"}}>Déconnexion</Link>
     </View>
   );

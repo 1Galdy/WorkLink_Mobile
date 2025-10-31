@@ -1,4 +1,11 @@
 {
   "select_language": "Select your language",
-  "continue": "Continue"
+  "continue": "Continue",
+  "profil": {
+    "langues": {
+      "titre": "Current Language",
+      "langue": "English",
+      "icon": "checked"
+    }
+  }
 }
