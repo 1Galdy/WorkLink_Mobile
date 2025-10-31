@@ -1,59 +1,92 @@
-import { Text, View, Pressable, Image } from "react-native";
 import { Link } from "expo-router";
+import { useTranslation } from "react-i18next";
+import { Pressable, Text, View } from "react-native";
+import CountryFlag from "react-native-country-flag";
+import { changeLanguage } from "../src/i18n"; // ⚙️ Import de notre fonction utilitaire
 
-export default function Start() {
+export default function Language() {
+  const { t, i18n } = useTranslation();
+
+  const handleLanguageChange = async (lang) => {
+    await changeLanguage(lang); // On change la langue dynamiquement
+  };
+
   return (
     <View style={{ flex: 1, backgroundColor: "#F0F1EC" }}>
-      {/* Bloc centré au milieu de l'écran */}
       <View
         style={{
           flex: 1,
           justifyContent: "center",
           alignItems: "center",
           paddingHorizontal: 20,
+          gap: 20,
         }}
       >
-        <Image
-          source={require('../assets/images/WorkLink_Logo.jpg')} // ✅ adapte le chemin si besoin
-          style={{
-            width: 140,       // ✅ largeur souhaitée
-            height: 140,      // ✅ hauteur souhaitée
-            resizeMode: 'contain', // pour garder les proportions
-            marginBottom: 20, // espace avec les autres éléments
-          }}
-        />
-
         <Text
           style={{
-            color: "gray",
-            textAlign: "center",
-            marginTop: 20,
-            fontSize: 13,
+            fontSize: 30,
             fontWeight: "bold",
+            width: 400,
+            textAlign: "center",
+            paddingBottom: 50,
+            color: "#005E46",
           }}
         >
-          Vous ne savez pas comment entrer en contact avec l'entreprise ou le travail de vos rêves ? WorkLink crée la connexion. Directement. En un clic.
+          {t("select_language") /* 🔹 traduit automatiquement */}
         </Text>
-      </View>
 
-      {/* Bouton fixé en bas */}
-      <View
-        style={{
-          padding: 20,
-          marginBottom: 40
-        }}
-      >
-        <Link href="/login" asChild>
+        {/* ---- FRANÇAIS ---- */}
+        <Pressable
+          onPress={() => handleLanguageChange("fr")}
+          style={{
+            backgroundColor: "#F0EEE9",
+            borderColor: i18n.language === "fr" ? "#005E46" : "gray",
+            borderWidth: 4,
+            borderRadius: 10,
+            padding: 12,
+            width: "100%",
+            alignSelf: "center",
+            flexDirection: "row",
+            justifyContent: "flex-start",
+          }}
+        >
+          <CountryFlag isoCode="fr" size={32} />
+          <Text style={{ marginLeft: 20 }}>Français</Text>
+        </Pressable>
+
+        {/* ---- ENGLISH ---- */}
+        <Pressable
+          onPress={() => handleLanguageChange("en")}
+          style={{
+            backgroundColor: "#F0EEE9",
+            borderColor: i18n.language === "en" ? "#005E46" : "gray",
+            borderWidth: 4,
+            borderRadius: 10,
+            padding: 12,
+            width: "100%",
+            alignSelf: "center",
+            flexDirection: "row",
+            justifyContent: "flex-start",
+          }}
+        >
+          <CountryFlag isoCode="gb" size={32} />
+          <Text style={{ marginLeft: 20 }}>English</Text>
+        </Pressable>
+
+        {/* ---- Continuer ---- */}
+        <Link href="/(start)" asChild>
           <Pressable
             style={{
-              backgroundColor: "rgb(0, 92, 69)",
+              backgroundColor: "#005E46",
               padding: 12,
-              borderRadius: 5,
+              borderRadius: 10,
               width: "100%",
-              alignSelf: "center",
+              marginTop: 30,
             }}
           >
-            <Text style={{ color: "#fff", textAlign: "center" }}>Continuer</Text>
+            <Text style={{ color: "white", textAlign: "center" }}>
+              {t("continue")}
+            </Text>
           </Pressable>
         </Link>
       </View>
