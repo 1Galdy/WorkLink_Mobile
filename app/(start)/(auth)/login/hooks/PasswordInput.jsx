@@ -1,17 +1,21 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { useState } from 'react';
+import { useTranslation } from "react-i18next";
+import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 export default function PasswordInput({ value, onChangeText, onBlur, error, touched }) {
+
+  const { t, i18n } = useTranslation();
+
   const [showPassword, setShowPassword] = useState(false);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>Mot de passe</Text>
+      <Text style={styles.label}>{t("login.passwordLabel")}</Text>
 
       <View style={styles.inputContainer}>
         <TextInput
           style={[styles.input, error && touched && { borderColor: 'red' }]}
-          placeholder="Entrez votre mot de passe"
+          placeholder={t("login.passwordPlaceholder")}
           value={value}
           onChangeText={onChangeText}
           onBlur={onBlur}

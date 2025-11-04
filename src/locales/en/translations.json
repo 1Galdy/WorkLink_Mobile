@@ -1,10 +1,114 @@
 {
-  "select_language": "Select your language",
-  "continue": "Continue",
-  "profil": {
-    "langues": {
+  "firstPage": {
+    "select_language": "Select your language",
+    "continueButton": "Continue"
+  },
+  "secondPage": {
+    "paragraphe": "Don't know how to connect with your dream company or job? WorkLink makes the connection. Directly. In one click.",
+    "continueButton": "Continue"
+  },
+  "login": {
+    "title": "Connection",
+    "nameLabel": "Name",
+    "namePlaceholder": "Enter your name",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "connexionButton": "Connection",
+    "createAccountText": "You don't have an account?",
+    "createAccountLink": "Create an account",
+    "errorMessage": {
+      "inputName": {
+        "required": "Name is required",
+        "min": "The name must contain at least 3 characters",
+        "matches": "The name must contain only letters, spaces, hyphens, or apostrophes."
+      },
+      "inputPassword": {
+        "required": "Password required",
+        "min": "The password must contain at least 8 characters.",
+        "firstMatches": "Must contain at least one letter",
+        "secondMatches": "Must contain at least one number",
+        "thirdMatches": "Must contain at least one special character"
+      }
+    }
+  },
+  "signup": {
+    "title": "Registration",
+    "nameLabel": "Name",
+    "namePlaceholder": "Enter your name",
+    "firstNameLabel": "First Name",
+    "firstNamePlaceholder": "Enter your Firstname",
+    "emailLabel": "E-mail",
+    "emailPlaceholder": "Enter your E-mail",
+    "dateLabel": "Date of birth",
+    "nextStepButton": "next",
+    "loginAccountText": "Do you have an account?",
+    "loginAccountLink": "Log in",
+    "errorMessage": {
+      "stepOne": {
+        "inputName": {
+          "required": "Name is required",
+          "min": "The name must contain at least 3 characters",
+          "matches": "The name must contain only letters, spaces, hyphens, or apostrophes."
+        },
+        "inputFirstName": {
+          "required": "First Name is required",
+          "min": "The first name must contain at least 3 characters",
+          "matches": "The first name must contain only letters, spaces, hyphens or apostrophes."
+        },
+        "inputEmail": {
+          "email": "Invalid email",
+          "required": "Email is required"
+        },
+        "inputDate": {
+          "required": "Birthday is required",
+          "max": "You must be at least 18 years old"
+        }
+      },
+      "stepTwo": {
+        "inputPassword": {
+          "required": "Password required",
+          "min": "The password must contain at least 8 characters",
+          "firstMatches": "Must contain at least one letter",
+          "secondMatches": "Must contain at least one number",
+          "thirdMatches": "Must contain at least one special character"
+        },
+        "inputPhone": {
+          "required": "A phone number is required",
+          "matches": "Invalid number"
+        },
+        "inputPays": {
+          "required": "Country is required",
+          "oneOf": "Choose a valid country"
+        },
+        "inputStatut": {
+          "required": "Choose your profile",
+          "oneOf": "Choose a valid status"
+        }
+      }
+    }
+  },
+  "homePage": {
+    "headerTitle": "Home",
+    "stackTitle": "Home"
+  },
+  "offresPage": {
+    "headerTitle": "Offers",
+    "stackTitle": "Offers"
+  },
+  "messagesPage": {
+    "headerTitle": "Messages",
+    "stackTitle": "Messages"
+  },
+  "profilPage": {
+    "headerTitle": "Profile",
+    "informationsPage":{
+      "headerTitle": "Information"
+    },
+    "languesPage": {
+      "headerTitle": "change languages",
       "titre": "Current Language",
       "langue": "English",
+      "saveButton": "Save",
       "icon": "checked"
     }
   }

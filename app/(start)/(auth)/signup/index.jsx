@@ -1,23 +1,26 @@
+import { Link, useRouter } from "expo-router";
 import {
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
   StyleSheet,
   Text,
-  View,
-  KeyboardAvoidingView,
-  ScrollView,
-  Platform,
   TouchableWithoutFeedback,
-  Keyboard
+  View
 } from "react-native";
-import { Link, useRouter } from "expo-router";
 
 // Import composants
-import Input from "./components/Input";
 import Button from "./components/Button";
+import Input from "./components/Input";
 import DatePickerInput from "./hooks/DatePickerInput";
 
 // Import Hook from form
 import DatasForm from "./hooks/DatasForm";
 import { useFormData } from "./hooks/FormContext";
+
+//Changer de langue
+import { useTranslation } from "react-i18next";
 
 // --------------------------------------------------------------------------------------------
 // ------------------------------------- explication ------------------------------------------
@@ -29,6 +32,8 @@ import { useFormData } from "./hooks/FormContext";
 // TouchableWithoutFeedback + Keyboard.dismiss() → pour fermer le clavier quand on tape à côté
 
 export default function Signup() {
+
+  const { t, i18n } = useTranslation();
 
   const { updateFormData } = useFormData(); // Sauvegarde des données avant de changer dde pages
 
@@ -65,10 +70,10 @@ export default function Signup() {
           keyboardShouldPersistTaps="handled"
         >
           <View style={styles.container}>
-            <Text style={styles.title}>Inscription</Text>
+            <Text style={styles.title}>{t("signup.title")}</Text>
             <Input 
-              text="Nom" 
-              placeholder="Entrez votre Nom" 
+              text={t("signup.nameLabel")} 
+              placeholder={t("signup.namePlaceholder")} 
               type="default" boolean={false} 
               value={formik.values.nom}
               onChangeText={formik.handleChange('nom')}
@@ -77,8 +82,8 @@ export default function Signup() {
               touched={formik.touched.nom} 
             />
             <Input 
-              text="Prénom" 
-              placeholder="Entrez votre Prénom" 
+              text={t("signup.firstNameLabel")} 
+              placeholder={t("signup.firstNamePlaceholder")} 
               type="default" boolean={false}
               value={formik.values.prenom}
               onChangeText={formik.handleChange('prenom')}
@@ -87,8 +92,8 @@ export default function Signup() {
               touched={formik.touched.prenom} 
             />
             <Input 
-              text="Email" 
-              placeholder="Entrez votre Email" 
+              text={t("signup.emailLabel")} 
+              placeholder={t("signup.emailPlaceholder")} 
               type="email-address" 
               boolean={false} 
               value={formik.values.email}
@@ -104,9 +109,9 @@ export default function Signup() {
               error={formik.errors.birthday}
               touched={formik.touched.birthday}
             />
-            <Button style={styles.button} onPress={SecondForm} title="Suivant" color="rgb(0, 92, 69)" />
+            <Button style={styles.button} onPress={SecondForm} title={t("signup.nextStepButton")} color="rgb(0, 92, 69)" />
             <Text style={{ textAlign: "center", marginTop: 20 }}>
-              Vous avez un compte ? <Link href="/login" style={{ color: "blue" }}>Connectez-vous</Link>
+              {t("signup.loginAccountText")} <Link href="/login" style={{ color: "blue" }}>{t("signup.loginAccountLink")}</Link>
             </Text>
           </View>
         </ScrollView>

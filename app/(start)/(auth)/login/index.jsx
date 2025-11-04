@@ -1,10 +1,11 @@
-import { StyleSheet, Text, View, KeyboardAvoidingView, TouchableWithoutFeedback, ScrollView, Keyboard, Platform } from "react-native";
 import { Link } from "expo-router";
+import { useTranslation } from "react-i18next";
+import { Keyboard, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TouchableWithoutFeedback, View } from "react-native";
 // import { useRouter } from "expo-router";
 
 // import component
-import Input from "./components/Input";
 import Button from "./components/Button";
+import Input from "./components/Input";
 import PasswordInput from "./hooks/PasswordInput";
 
 // Import Hook from form
@@ -13,6 +14,8 @@ import DatasForm from "./hooks/DatasForm";
 export default function Login() {
 
   const formik = DatasForm();
+
+  const { t, i18n } = useTranslation();
 
   // const router = useRouter();
 
@@ -38,10 +41,10 @@ export default function Login() {
             }}
           >
             <View style={styles.container}>
-              <Text style={{ marginBottom: 70, textAlign: "center", fontSize: 20, fontWeight: "bold" }}>Connexion</Text>
+              <Text style={{ marginBottom: 70, textAlign: "center", fontSize: 20, fontWeight: "bold" }}>{t("login.title")}</Text>
               <Input
-                text="Nom"
-                placeholder="Entrez votre nom"
+                text={t("login.nameLabel")}
+                placeholder={t("login.namePlaceholder")}
                 type="default"
                 boolean={false}
                 value={formik.values.nom}
@@ -57,8 +60,8 @@ export default function Login() {
                 error={formik.errors.password}
                 touched={formik.touched.password}
               />
-              <Button style={styles.button} onPress={formik.handleSubmit} title="Connexion" color="rgb(0, 92, 69)" />
-              <Text style={{textAlign: "center"}}>Vous n'avez pas de compte ? <Link href="/signup" style={{color: "blue"}}>Créer un compte</Link></Text>
+              <Button style={styles.button} onPress={formik.handleSubmit} title={t("login.connexionButton")} color="rgb(0, 92, 69)" />
+              <Text style={{textAlign: "center"}}>{t("login.createAccountText")}<Link href="/signup" style={{color: "blue"}}>{t("login.createAccountLink")}</Link></Text>
             </View>
             
           </View>

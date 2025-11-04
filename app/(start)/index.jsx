@@ -1,7 +1,11 @@
 import { Link } from "expo-router";
+import { useTranslation } from "react-i18next";
 import { Image, Pressable, Text, View } from "react-native";
 
 export default function Start() {
+
+  const { t, i18n } = useTranslation();
+
   return (
     <View style={{ flex: 1, backgroundColor: "#F0F1EC" }}>
       {/* Bloc centré au milieu de l'écran */}
@@ -32,7 +36,7 @@ export default function Start() {
             fontWeight: "bold",
           }}
         >
-          Vous ne savez pas comment entrer en contact avec l'entreprise ou le travail de vos rêves ? WorkLink crée la connexion. Directement. En un clic.
+          {t("secondPage.paragraphe")}
         </Text>
       </View>
 
@@ -53,7 +57,7 @@ export default function Start() {
               alignSelf: "center",
             }}
           >
-            <Text style={{ color: "#fff", textAlign: "center" }}>Continuer</Text>
+            <Text style={{ color: "#fff", textAlign: "center" }}>{t("secondPage.continueButton")}</Text>
           </Pressable>
         </Link>
       </View>

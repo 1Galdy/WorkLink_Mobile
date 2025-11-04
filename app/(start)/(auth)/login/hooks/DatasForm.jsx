@@ -4,7 +4,12 @@ import { Alert } from 'react-native';
 
 import { useRouter } from "expo-router";
 
+//Faire le choix de la langue
+import { useTranslation } from "react-i18next";
+
 export default function DatasForm(){
+
+    const { t} = useTranslation();
 
     const router = useRouter();
 
@@ -15,18 +20,18 @@ export default function DatasForm(){
     },
     validationSchema: Yup.object({
       nom: Yup.string()
-        .required("Le nom est requis")
-        .min(3, 'Le nom ne doit contenir au moins 3 caractères')
+        .required(t("login.errorMessage.inputName.required"))
+        .min(3, 'login.errorMessage.inputName.min')
         .matches(
             /^[a-zA-ZÀ-ÿ' -]+$/,
-            "Le nom ne doit contenir que des lettres, espaces, tirets ou apostrophes"
+            t("login.errorMessage.inputName.matches")
         ),
       password: Yup.string()
-        .required('Mot de passe requis')
-        .min(8, 'Le mot de passe doit contenir au moins 8 caractères')
-        .matches(/[a-zA-Z]/, 'Doit contenir au moins une lettre')
-        .matches(/\d/, 'Doit contenir au moins un chiffre')
-        .matches(/[!@#$%^&*(),.?":{}|<>]/, 'Doit contenir au moins un caractère spécial'),
+        .required(t("login.errorMessage.inputPassword.required"))
+        .min(8, 'login.errorMessage.inputPassword.min')
+        .matches(/[a-zA-Z]/, 'login.errorMessage.inputPassword.firstMatches')
+        .matches(/\d/, 'login.errorMessage.inputPassword.secondMatches')
+        .matches(/[!@#$%^&*(),.?":{}|<>]/, 'login.errorMessage.inputPassword.thirdMatches'),
     }),
     onSubmit: (values) => {
       Alert.alert('Infos saisies', `Nom : ${values.nom}\nMot de passe : ${values.password}`);

@@ -37,7 +37,7 @@ export default function ChoiceLanguage(){
             color: "gray",
           }}
         >
-          {t("profil.langues.titre") /* 🔹 traduit automatiquement */}
+          {t("profilPage.languesPage.titre") /* 🔹 traduit automatiquement */}
         </Text>
 
         <Text
@@ -51,7 +51,7 @@ export default function ChoiceLanguage(){
             color: "black",
           }}
         >
-          {t("profil.langues.langue")}
+          {t("profilPage.languesPage.langue")}
         </Text>
 
         {/* ---- FRANÇAIS ---- */}
@@ -104,7 +104,7 @@ export default function ChoiceLanguage(){
             }}
           >
             <Text style={{ color: "white", textAlign: "center" }}>
-              {t("continue")}
+              {t("profilPage.languesPage.saveButton")}
             </Text>
         </Pressable>
       </View>

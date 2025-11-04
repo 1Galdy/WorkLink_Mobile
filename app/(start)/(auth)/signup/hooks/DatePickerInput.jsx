@@ -1,8 +1,12 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Platform } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { useState } from 'react';
+import { useTranslation } from "react-i18next";
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function DatePickerInput({ value, onChange, onBlur, error, touched }) {
+
+  const { t, i18n } = useTranslation();
+
   const [showPicker, setShowPicker] = useState(false);
 
   const handleChange = (event, selectedDate) => {
@@ -21,7 +25,7 @@ export default function DatePickerInput({ value, onChange, onBlur, error, touche
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>Date de naissance</Text>
+      <Text style={styles.label}>{t("signup.dateLabel")}</Text>
 
       <TouchableOpacity style={styles.input} onPress={() => setShowPicker(true)}>
         <Text>{formatDate(value)}</Text>

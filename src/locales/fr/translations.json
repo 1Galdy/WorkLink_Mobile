@@ -1,10 +1,114 @@
 {
-  "select_language": "Sélectionnez votre langue",
-  "continue": "Continuer",
-  "profil": {
-    "langues": {
+  "firstPage": {
+    "select_language": "Sélectionnez votre langue",
+    "continueButton": "Continuer"
+  },
+  "secondPage": {
+    "paragraphe": "Vous ne savez pas comment entrer en contact avec l'entreprise ou le travail de vos rêves ? WorkLink crée la connexion. Directement. En un clic.",
+    "continueButton": "Continuer"
+  },
+  "login": {
+    "title": "Connexion",
+    "nameLabel": "Nom",
+    "namePlaceholder": "Entrez votre nom",
+    "passwordLabel": "Mot de passe",
+    "passwordPlaceholder": "Entrez votre mot de passe",
+    "connexionButton": "Connexion",
+    "createAccountText": "Vous n'avez pas de compte ?",
+    "createAccountLink": "Créer un compte",
+    "errorMessage": {
+      "inputName": {
+        "required": "Le nom est requis",
+        "min": "Le nom ne doit contenir au moins 3 caractères",
+        "matches": "Le nom ne doit contenir que des lettres, espaces, tirets ou apostrophes"
+      },
+      "inputPassword": {
+        "required": "Mot de passe requis",
+        "min": "Le mot de passe doit contenir au moins 8 caractères",
+        "firstMatches": "Doit contenir au moins une lettre",
+        "secondMatches": "Doit contenir au moins un chiffre",
+        "thirdMatches": "Doit contenir au moins un caractère spécial"
+      }
+    }
+  },
+  "signup": {
+    "title": "Inscription",
+    "nameLabel": "Nom",
+    "namePlaceholder": "Entrez votre Prénom",
+    "firstNameLabel": "Prénom",
+    "firstNamePlaceholder": "Entrez votre prénom",
+    "emailLabel": "Email",
+    "emailPlaceholder": "Entrez votre Email",
+    "dateLabel": "Date de naissance",
+    "nextStapeButton": "Suivant",
+    "loginAccountText": "Vous avez un compte ?",
+    "loginAccountLink": "Connectez-vous",
+    "errorMessage": {
+      "stepOne": {
+        "inputName": {
+          "required": "Le nom es requis",
+          "min": "Le nom doit contenir au moins 3 caractères",
+          "matches": "Le nom ne doit contenir que des lettres, espaces, tirets ou apostrophes"
+        },
+        "inputFirstName": {
+          "required": "Le prénom est requis",
+          "min": "Le prénom doit contenir au moins 3 caractères",
+          "matches": "Le prénom ne doit contenir que des lettres, espaces, tirets ou apostrophes"
+        },
+        "inputEmail": {
+          "email": "Email invalide",
+          "required": "L'email est requis"
+        },
+        "inputDate": {
+          "required": "Date de naissance requise",
+          "max": "Vous devez avoir au moins 18 ans"
+        }
+      },
+      "stepTwo": {
+        "inputPassword": {
+          "required": "Mot de passe requis",
+          "min": "Le mot de passe doit contenir au moins 8 caractères",
+          "firstMatches": "Doit contenir au moins une lettre",
+          "secondMatches": "Doit contenir au moins un chiffre",
+          "thirdMatches": "Doit contenir au moins un caractère spécial"
+        },
+        "inputPhone": {
+          "required": "Le numéro de téléphone est requis",
+          "matches": "Numéro invalide"
+        },
+        "inputPays": {
+          "required": "Le pays est requis",
+          "oneOf": "Choisissez un pays valide"
+        },
+        "inputStatut": {
+          "required": "Faites le choix de votre profil",
+          "oneOf": "Choisissez un statut valide"
+        }
+      }
+    }
+  },
+  "homePage": {
+    "headerTitle": "Accueil",
+    "stackTitle": "Accueil"
+  },
+  "offresPage": {
+    "headerTitle": "Offres",
+    "stackTitle": "Offres"
+  },
+  "messagesPage": {
+    "headerTitle": "Messages",
+    "stackTitle": "Messages"
+  },
+  "profilPage": {
+    "headerTitle": "Profil",
+    "informationsPage":{
+      "headerTitle": "Informations"
+    },
+    "languesPage": {
+      "headerTitle": "changer de langues",
       "titre": "Langue Actuelle",
       "langue": "Français",
+      "saveButton": "Sauvegarder",
       "icon": "checked"
     }
   }

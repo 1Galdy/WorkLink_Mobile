@@ -32,7 +32,7 @@ export default function Language() {
             color: "#005E46",
           }}
         >
-          {t("select_language") /* 🔹 traduit automatiquement */}
+          {t("firstPage.select_language") /* 🔹 traduit automatiquement */}
         </Text>
 
         {/* ---- FRANÇAIS ---- */}
@@ -85,7 +85,7 @@ export default function Language() {
             }}
           >
             <Text style={{ color: "white", textAlign: "center" }}>
-              {t("continue")}
+              {t("firstPage.continueButton")}
             </Text>
           </Pressable>
         </Link>
