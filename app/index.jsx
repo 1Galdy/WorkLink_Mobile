@@ -1,8 +1,11 @@
 import { Link } from "expo-router";
 import { useTranslation } from "react-i18next";
-import { Pressable, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import CountryFlag from "react-native-country-flag";
 import { changeLanguage } from "../src/i18n"; // ⚙️ Import de notre fonction utilitaire
+
+//Thème/style de l'application
+import { theme } from "../src/theme/themeGlobal";
 
 export default function Language() {
   const { t, i18n } = useTranslation();
@@ -12,7 +15,7 @@ export default function Language() {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#F0F1EC" }}>
+    <View style={styles.container}>
       <View
         style={{
           flex: 1,
@@ -23,14 +26,7 @@ export default function Language() {
         }}
       >
         <Text
-          style={{
-            fontSize: 30,
-            fontWeight: "bold",
-            width: 400,
-            textAlign: "center",
-            paddingBottom: 50,
-            color: "#005E46",
-          }}
+          style={styles.titleH1}
         >
           {t("firstPage.select_language") /* 🔹 traduit automatiquement */}
         </Text>
@@ -76,15 +72,9 @@ export default function Language() {
         {/* ---- Continuer ---- */}
         <Link href="/(start)" asChild>
           <Pressable
-            style={{
-              backgroundColor: "#005E46",
-              padding: 12,
-              borderRadius: 10,
-              width: "100%",
-              marginTop: 30,
-            }}
+            style={styles.pressableButton}
           >
-            <Text style={{ color: "white", textAlign: "center" }}>
+            <Text style={styles.buttonTexte}>
               {t("firstPage.continueButton")}
             </Text>
           </Pressable>
@@ -93,3 +83,30 @@ export default function Language() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1, 
+    backgroundColor: theme.colors.background 
+  },
+  titleH1: {
+    fontFamily: theme.fonts.main.RobotoRegular,
+    fontSize: theme.fonts.sizeStyle.title,
+    fontWeight: "bold",
+    width: 400,
+    textAlign: "center",
+    paddingBottom: 50,
+    color: theme.colors.important
+  },
+  pressableButton: {
+    backgroundColor: theme.colors.important,
+    padding: 12,
+    borderRadius: 10,
+    width: "100%",
+    marginTop: 30,
+  },
+  buttonTexte: { 
+    color: theme.colors.defaultWhite, 
+    textAlign: "center",
+  }
+})

@@ -1,13 +1,16 @@
 import { Link } from "expo-router";
 import { useTranslation } from "react-i18next";
-import { Image, Pressable, Text, View } from "react-native";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+
+//Thème/style de l'application
+import { theme } from "../../src/theme/themeGlobal";
 
 export default function Start() {
 
   const { t, i18n } = useTranslation();
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#F0F1EC" }}>
+    <View style={styles.container} >
       {/* Bloc centré au milieu de l'écran */}
       <View
         style={{
@@ -28,13 +31,7 @@ export default function Start() {
         />
 
         <Text
-          style={{
-            color: "gray",
-            textAlign: "center",
-            marginTop: 20,
-            fontSize: 13,
-            fontWeight: "bold",
-          }}
+          style={styles.paragraphe}
         >
           {t("secondPage.paragraphe")}
         </Text>
@@ -49,18 +46,37 @@ export default function Start() {
       >
         <Link href="/login" asChild>
           <Pressable
-            style={{
-              backgroundColor: "rgb(0, 92, 69)",
-              padding: 12,
-              borderRadius: 5,
-              width: "100%",
-              alignSelf: "center",
-            }}
+            style={styles.pressableButton}
           >
-            <Text style={{ color: "#fff", textAlign: "center" }}>{t("secondPage.continueButton")}</Text>
+            <Text style={styles.buttonTexte}>{t("secondPage.continueButton")}</Text>
           </Pressable>
         </Link>
       </View>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+      flex: 1, 
+      backgroundColor: theme.colors.background 
+    },
+    paragraphe: {
+      color: theme.colors.defaultGray,
+      textAlign: "center",
+      marginTop: 20,
+      fontSize: 13,
+      fontWeight: "bold",
+    },
+    pressableButton: {
+      backgroundColor: theme.colors.important,
+      padding: 12,
+      borderRadius: 5,
+      width: "100%",
+      alignSelf: "center",
+    },
+    buttonTexte: { 
+      color: theme.colors.defaultWhite, 
+      textAlign: "center" 
+    }
+})

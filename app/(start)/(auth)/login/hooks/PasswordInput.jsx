@@ -2,9 +2,12 @@ import { useState } from 'react';
 import { useTranslation } from "react-i18next";
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
+//Thème/style de l'application
+import { theme } from "../../../../../src/theme/themeGlobal";
+
 export default function PasswordInput({ value, onChangeText, onBlur, error, touched }) {
 
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -16,6 +19,7 @@ export default function PasswordInput({ value, onChangeText, onBlur, error, touc
         <TextInput
           style={[styles.input, error && touched && { borderColor: 'red' }]}
           placeholder={t("login.passwordPlaceholder")}
+          placeholderTextColor="#999"
           value={value}
           onChangeText={onChangeText}
           onBlur={onBlur}
@@ -24,7 +28,7 @@ export default function PasswordInput({ value, onChangeText, onBlur, error, touc
 
         <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
           <Text style={styles.toggle}>
-            {showPassword ? 'Cacher' : 'Afficher'}
+            {showPassword ? t("login.passwordHidden") : t("login.passwordVisible")}
           </Text>
         </TouchableOpacity>
       </View>
@@ -41,7 +45,8 @@ const styles = StyleSheet.create({
   },
   label: {
     marginBottom: 6,
-    fontSize: 16,
+    fontFamily: theme.fonts.main.RobotoRegular,
+    fontSize: theme.fonts.sizeStyle.loginTitle,
     fontWeight: '500',
   },
   inputContainer: {
@@ -55,7 +60,8 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     paddingVertical: 12,
-    fontSize: 16,
+    fontFamily: theme.fonts.main.RobotoRegular,
+    fontSize: theme.fonts.sizeStyle.placeholderInput,
   },
   toggle: {
     color: 'rgb(0, 92, 69)',
@@ -64,7 +70,8 @@ const styles = StyleSheet.create({
   },
     error: {
     color: 'red',
-    fontSize: 12,
+    fontFamily: theme.fonts.main.RobotoRegular,
+    fontSize: theme.fonts.sizeStyle.loginTitle,
     marginTop: 4,
   },
 });

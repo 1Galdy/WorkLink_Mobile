@@ -1,4 +1,7 @@
-import {StyleSheet , Text, TouchableOpacity, View} from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+
+//Thème/style de l'application
+import { theme } from "../../../../../src/theme/themeGlobal";
 
 export default function Input({onPress, title, color}){
  return(
@@ -21,6 +24,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   text: {
+    fontFamily: theme.fonts.main.RobotoRegular,
     color: '#fff',
     fontWeight: 'bold',
     fontSize: 16,

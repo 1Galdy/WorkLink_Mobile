@@ -16,6 +16,8 @@
     "connexionButton": "Connexion",
     "createAccountText": "Vous n'avez pas de compte ?",
     "createAccountLink": "Créer un compte",
+    "passwordHidden": "Cacher",
+    "passwordVisible": "Afficher",
     "errorMessage": {
       "inputName": {
         "required": "Le nom est requis",
@@ -25,7 +27,8 @@
       "inputPassword": {
         "required": "Mot de passe requis",
         "min": "Le mot de passe doit contenir au moins 8 caractères",
-        "firstMatches": "Doit contenir au moins une lettre",
+        "firstMatches": "Doit contenir au moins une minuscule",
+        "uppercase": "Doit contenir au moins une majuscule",
         "secondMatches": "Doit contenir au moins un chiffre",
         "thirdMatches": "Doit contenir au moins un caractère spécial"
       }
@@ -40,9 +43,23 @@
     "emailLabel": "Email",
     "emailPlaceholder": "Entrez votre Email",
     "dateLabel": "Date de naissance",
-    "nextStapeButton": "Suivant",
+    "nextStepButton": "Suivant",
     "loginAccountText": "Vous avez un compte ?",
     "loginAccountLink": "Connectez-vous",
+    "passwordHidden": "Cacher",
+    "passwordVisible": "Afficher",
+    "pageTwo": {
+      "passwordLabel": "Mot-de-passe",
+      "passwordPlaceholder": "Entrez votre mot de passe",
+      "phoneLabel": "Numéro de téléphone",
+      "phonePlaceholder": "+242 6 458.../+33 7 85...",
+      "paysLabel": "Pays de résidence",
+      "paysPlaceholder": "Votre pays",
+      "radioParticulier": "Particulier",
+      "radioEntreprise": "Entreprise",
+      "registerButton": "Inscription",
+      "registerLabel": "Vous êtes :"
+    },
     "errorMessage": {
       "stepOne": {
         "inputName": {
@@ -68,7 +85,8 @@
         "inputPassword": {
           "required": "Mot de passe requis",
           "min": "Le mot de passe doit contenir au moins 8 caractères",
-          "firstMatches": "Doit contenir au moins une lettre",
+          "firstMatches": "Doit contenir au moins une minuscule",
+          "uppercase": "Doit contenir au moins une majuscule",
           "secondMatches": "Doit contenir au moins un chiffre",
           "thirdMatches": "Doit contenir au moins un caractère spécial"
         },

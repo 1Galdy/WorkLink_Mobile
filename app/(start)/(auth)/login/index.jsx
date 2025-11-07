@@ -11,6 +11,9 @@ import PasswordInput from "./hooks/PasswordInput";
 // Import Hook from form
 import DatasForm from "./hooks/DatasForm";
 
+//Thème/style de l'application
+import { theme } from "../../../../src/theme/themeGlobal";
+
 export default function Login() {
 
   const formik = DatasForm();
@@ -61,7 +64,7 @@ export default function Login() {
                 touched={formik.touched.password}
               />
               <Button style={styles.button} onPress={formik.handleSubmit} title={t("login.connexionButton")} color="rgb(0, 92, 69)" />
-              <Text style={{textAlign: "center"}}>{t("login.createAccountText")}<Link href="/signup" style={{color: "blue"}}>{t("login.createAccountLink")}</Link></Text>
+              <Text style={styles.loginButtonTexte}>{t("login.createAccountText")}<Link href="/signup" style={{color: "blue"}}>{t("login.createAccountLink")}</Link></Text>
             </View>
             
           </View>
@@ -77,6 +80,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
+    backgroundColor: theme.colors.background
   },
   container: {
     borderWidth: 1,
@@ -86,4 +90,8 @@ const styles = StyleSheet.create({
     padding: 30,
     borderRadius: 8,
   },
+  loginButtonTexte: {
+    textAlign: "center",
+    fontFamily: theme.fonts.main.RobotoRegular,
+  }
 })

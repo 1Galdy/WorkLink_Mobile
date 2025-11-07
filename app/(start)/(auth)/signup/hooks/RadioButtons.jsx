@@ -1,17 +1,25 @@
-import React from 'react';
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+
+//Thème/style de l'application
+import { theme } from "../../../../../src/theme/themeGlobal";
+
+//Traduction
+import { useTranslation } from "react-i18next";
 
 export default function RadioButtons({ value, onChange, error, touched }) {
+
+  const { t } = useTranslation();
+
   const options = [
-    { label: "Particulier", value: "particulier" },
-    { label: "Entreprise", value: "entreprise" },
+    { label: t("signup.pageTwo.radioParticulier"), value: "particulier" },
+    { label: t("signup.pageTwo.radioEntreprise"), value: "entreprise" },
   ];
 
   const showError = error && touched;
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>Vous êtes :</Text>
+      <Text style={styles.label}>{t("signup.pageTwo.registerLabel")}</Text>
 
       <View style={styles.radioWrapper}>
         {options.map((option) => (
@@ -53,6 +61,8 @@ const styles = StyleSheet.create({
     marginVertical: 15,
   },
   label: {
+    fontFamily: theme.fonts.main.RobotoRegular,
+    fontWeight: theme.fonts.sizeStyle.fontWeight,
     fontSize: 16,
     marginBottom: 10,
   },
@@ -85,11 +95,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   textUnselected: {
+    fontFamily: theme.fonts.main.RobotoRegular,
     color: 'black',
   },
   error: {
+    fontFamily: theme.fonts.main.RobotoRegular,
     color: 'red',
     marginTop: 4,
-    fontSize: 12,
+    fontSize: theme.fonts.sizeStyle.texte,
   },
 });

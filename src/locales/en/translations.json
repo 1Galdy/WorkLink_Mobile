@@ -16,6 +16,8 @@
     "connexionButton": "Connection",
     "createAccountText": "You don't have an account?",
     "createAccountLink": "Create an account",
+    "passwordHidden": "hide",
+    "passwordVisible": "Show",
     "errorMessage": {
       "inputName": {
         "required": "Name is required",
@@ -25,7 +27,8 @@
       "inputPassword": {
         "required": "Password required",
         "min": "The password must contain at least 8 characters.",
-        "firstMatches": "Must contain at least one letter",
+        "firstMatches": "Must contain at least one tiny",
+        "uppercase": "Must contain at least one capital letter",
         "secondMatches": "Must contain at least one number",
         "thirdMatches": "Must contain at least one special character"
       }
@@ -43,6 +46,20 @@
     "nextStepButton": "next",
     "loginAccountText": "Do you have an account?",
     "loginAccountLink": "Log in",
+    "passwordHidden": "hide",
+    "passwordVisible": "Show",
+    "pageTwo": {
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "Enter your password",
+      "phoneLabel": "Phone number",
+      "phonePlaceholder": "+242 6 458.../+33 7 85...",
+      "paysLabel": "Country of Residence",
+      "paysPlaceholder": "Your country",
+      "radioParticulier": "Particular",
+      "radioEntreprise": "Company",
+      "registerButton": "Registration",
+      "registerLabel": "You are :"
+    },
     "errorMessage": {
       "stepOne": {
         "inputName": {
@@ -68,7 +85,8 @@
         "inputPassword": {
           "required": "Password required",
           "min": "The password must contain at least 8 characters",
-          "firstMatches": "Must contain at least one letter",
+          "firstMatches": "Must contain at least one tiny",
+          "uppercase": "Must contain at least one capital letter",
           "secondMatches": "Must contain at least one number",
           "thirdMatches": "Must contain at least one special character"
         },

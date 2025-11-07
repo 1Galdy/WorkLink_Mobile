@@ -1,4 +1,7 @@
-import { StyleSheet, TextInput, Text, View } from 'react-native';
+import { StyleSheet, Text, TextInput, View } from 'react-native';
+
+//Thème/style de l'application
+import { theme } from "../../../../../src/theme/themeGlobal";
 
 export default function Input({ 
   text, 
@@ -19,6 +22,7 @@ export default function Input({
       <TextInput
         style={[styles.input, showError && { borderColor: 'red' }]}
         placeholder={placeholder}
+        placeholderTextColor="#999"
         keyboardType={type}
         secureTextEntry={boolean}
         value={value}
@@ -36,21 +40,25 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   label: {
+    fontFamily: theme.fonts.main.RobotoRegular,
+    fontWeight: theme.fonts.sizeStyle.fontWeight,
     marginBottom: 6,
-    fontSize: 16,
+    fontSize: theme.fonts.sizeStyle.loginTitle,
     fontWeight: '500',
     color: '#333',
   },
   input: {
+    fontFamily: theme.fonts.main.RobotoRegular,
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 8,
     padding: 12,
-    fontSize: 16,
+    fontSize: theme.fonts.sizeStyle.placeholderInput,
   },
   error: {
     color: 'red',
     marginTop: 4,
-    fontSize: 12,
+    fontFamily: theme.fonts.main.RobotoRegular,
+    fontSize: theme.fonts.sizeStyle.loginTitle,
   },
 });

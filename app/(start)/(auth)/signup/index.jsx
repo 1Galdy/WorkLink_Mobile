@@ -10,6 +10,9 @@ import {
   View
 } from "react-native";
 
+//Thème/style de l'application
+import { theme } from "../../../../src/theme/themeGlobal";
+
 // Import composants
 import Button from "./components/Button";
 import Input from "./components/Input";
@@ -61,7 +64,7 @@ export default function Signup() {
 
   return (
     <KeyboardAvoidingView
-      style={{ flex: 1 }}
+      style={styles.firstContainer}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -110,7 +113,7 @@ export default function Signup() {
               touched={formik.touched.birthday}
             />
             <Button style={styles.button} onPress={SecondForm} title={t("signup.nextStepButton")} color="rgb(0, 92, 69)" />
-            <Text style={{ textAlign: "center", marginTop: 20 }}>
+            <Text style={styles.texte}>
               {t("signup.loginAccountText")} <Link href="/login" style={{ color: "blue" }}>{t("signup.loginAccountLink")}</Link>
             </Text>
           </View>
@@ -121,11 +124,15 @@ export default function Signup() {
 }
 
 const styles = StyleSheet.create({
+  firstContainer: { 
+    flex: 1, 
+    backgroundColor: theme.colors.background
+  },
   scrollContainer: {
     flexGrow: 1,
     justifyContent: "center",
     alignItems: "center",
-    marginVertical: 50
+    marginVertical: 30,
   },
   container: {
     borderWidth: 1,
@@ -137,9 +144,16 @@ const styles = StyleSheet.create({
     // marginVertical: 40
   },
   title: {
+    fontFamily: theme.fonts.main.RobotoRegular,
     marginBottom: 60,
     textAlign: "center",
     fontSize: 20,
     fontWeight: "bold",
+  },
+  texte: { 
+    fontFamily: theme.fonts.main.RobotoRegular,
+    fontSize: theme.fonts.sizeStyle.texte,
+    textAlign: "center", 
+    marginTop: 20 
   }
 });

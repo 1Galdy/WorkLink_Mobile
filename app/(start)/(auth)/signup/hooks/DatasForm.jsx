@@ -42,7 +42,8 @@ export default function DatasForm(step = 1) {
     password: Yup.string()
       .required(t("signup.errorMessage.stepTwo.inputPassword.required"))
       .min(8, t("signup.errorMessage.stepTwo.inputPassword.min"))
-      .matches(/[a-zA-Z]/, t("signup.errorMessage.stepTwo.inputPassword.firstMatches"))
+      .matches(/[a-z]/, t("login.errorMessage.inputPassword.firstMatches"))
+      .matches(/[A-Z]/, t("login.errorMessage.inputPassword.uppercase"))
       .matches(/\d/, t("signup.errorMessage.stepTwo.inputPassword.secondMatches"))
       .matches(/[!@#$%^&*(),.?\":{}|<>]/, t("signup.errorMessage.stepTwo.inputPassword.thirdMatches")),
     telephone: Yup.string()
