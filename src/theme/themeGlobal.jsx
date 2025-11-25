@@ -1,6 +1,6 @@
 export const theme = {
   colors: {
-    primary: '#1F3639',
+    primary: '#4b6d72',
     background: '#F0EEE9',
     important: '#005E46',
     errorColor: "#FF0000",
@@ -34,4 +34,11 @@ export const theme = {
         contraste: 1.75, //S'utilise de la sorte filter: contrast(1); et contrast(0.65) = 65% de contraste donc contrast(65%)
     }
   },
+  pages: {
+    homeCard: {
+        width: 370,
+        height: 123,
+        padding: 10
+    }
+  }
 };

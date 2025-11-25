@@ -6,16 +6,21 @@ import { Tabs } from 'expo-router';
 //Faire le choix de la langue
 import { useTranslation } from "react-i18next";
 
+// Import du composant HeaderRight
+import HeaderRight from '../../../src/components/HeaderRight';
+
 export default function TabsLayout() {
 
   const { t} = useTranslation();
-
+  
   return (
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: 'rgb(0, 92, 69)',
         tabBarInactiveTintColor: 'gray',
         headerShown: true, // *** Cacher le header pour tous les onglets à ce niveau
+        // Utilisez simplement le composant
+        headerRight: () => <HeaderRight />,
       }}
     >
       <Tabs.Screen
