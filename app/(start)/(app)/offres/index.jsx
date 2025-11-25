@@ -17,7 +17,7 @@ export default function Home() {
         gap: 30
       }}
     >
-      <Text style={styles.count}>10 Canditatures</Text>
+      <Text style={styles.count}>10 Candidatures</Text>
 
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.gapCards}>
