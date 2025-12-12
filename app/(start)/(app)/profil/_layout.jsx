@@ -39,6 +39,41 @@ export default function ProfilLayout() {
           title: t("profilPage.languesPage.headerTitle"),
         }}
       />
+      <Stack.Screen
+        name="about/index"
+        options={{
+          headerShown: true,     // Afficher header pour /profil/langues
+          title: "Nous sommes ?",
+        }}
+      />
+      <Stack.Screen
+        name="mentors/index"
+        options={{
+          headerShown: true,     // Afficher header pour /profil/langues
+          title: "Les Mentors",
+        }}
+      />
+      <Stack.Screen
+        name="professeurs/index"
+        options={{
+          headerShown: true,     // Afficher header pour /profil/langues
+          title: "Les professeurs",
+        }}
+      />
+      <Stack.Screen
+        name="ajouts/index"
+        options={{
+          headerShown: true,     // Afficher header pour /profil/langues
+          title: "Demandes/Ajouts",
+        }}
+      />
+      <Stack.Screen
+        name="amies/index"
+        options={{
+          headerShown: true,     // Afficher header pour /profil/langues
+          title: "Amis",
+        }}
+      />
     </Stack>
   );
 }

@@ -38,10 +38,11 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="messages/index"
+        name="messages"
         options={{
           title: t("messagesPage.headerTitle"),
           tabBarIcon: ({ color, size }) => <Ionicons name="mail-unread" size={size} color={color} />,
+          headerShown: false, // Important pour laisser le Stack gérer le header
         }}
       />
       <Tabs.Screen
@@ -50,6 +51,24 @@ export default function TabsLayout() {
           title: t("profilPage.headerTitle"),
           tabBarIcon: ({ color, size }) => <FontAwesome6 name="user-large" size={size} color={color} />,
           headerShown: false,
+        }}
+      />
+      {/* Pages cachées de la bottom navigation mais accessibles */}
+      <Tabs.Screen
+        name="notifications/index"
+        options={{
+          href: null, // ← Masque de la bottom navigation
+          title: "Notifications",
+          headerShown: true,
+        }}
+      />
+      
+      <Tabs.Screen
+        name="candidatures"
+        options={{
+          href: null, // ← Masque de la bottom navigation
+          title: "Mes candidatures",
+          headerShown: true,
         }}
       />
     </Tabs>

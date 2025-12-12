@@ -5,6 +5,10 @@ import { Link } from "expo-router";
 //Les icons
 import { FontAwesome, Ionicons, MaterialCommunityIcons, MaterialIcons, Octicons, SimpleLineIcons } from '@expo/vector-icons';
 
+import Foundation from 'react-native-vector-icons/Foundation';
+
+import Entypo from 'react-native-vector-icons/Entypo';
+
 export default function Profil() {
   return (
     <View
@@ -69,7 +73,7 @@ export default function Profil() {
           </Pressable>
         </Link>
 
-        <Link href="/profil/informations" style={[styles.containerPoste, styles.block]} asChild>
+        <Link href="/profil/amies" style={[styles.containerPoste, styles.block]} asChild>
           <Pressable>
           <View style={styles.rowInside}>
             <MaterialIcons name="groups-2" size={24} color="green" />
@@ -78,7 +82,7 @@ export default function Profil() {
           </Pressable>
         </Link>
 
-        <Link href="/profil/informations" style={[styles.containerPoste, styles.block]} asChild>
+        <Link href="/profil/ajouts" style={[styles.containerPoste, styles.block]} asChild>
           <Pressable>
           <View style={styles.rowInside}>
             <Octicons name="diff-added" size={24} color="green" />
@@ -92,6 +96,33 @@ export default function Profil() {
           <View style={styles.rowInside}>
             <FontAwesome name="language" color="green" size={24} />
             <Text style={styles.textColor}>Langues</Text>
+          </View>
+          </Pressable>
+        </Link>
+
+        <Link href="/profil/professeurs" style={[styles.containerPoste, styles.block]} asChild>
+          <Pressable>
+          <View style={styles.rowInside}>
+            <MaterialCommunityIcons name="stamper" color="green" size={24} />
+            <Text style={styles.textColor}>Professeurs</Text>
+          </View>
+          </Pressable>
+        </Link>
+
+        <Link href="/profil/mentors" style={[styles.containerPoste, styles.block]} asChild>
+          <Pressable>
+          <View style={styles.rowInside}>
+            <Foundation name="torsos" color="green" size={24} />
+            <Text style={styles.textColor}>Mentors</Text>
+          </View>
+          </Pressable>
+        </Link>
+
+        <Link href="/profil/about" style={[styles.containerPoste, styles.block]} asChild>
+          <Pressable>
+          <View style={styles.rowInside}>
+            <Entypo name="fingerprint" color="green" size={24} />
+            <Text style={styles.textColor}>Qui sommes nous ?</Text>
           </View>
           </Pressable>
         </Link>

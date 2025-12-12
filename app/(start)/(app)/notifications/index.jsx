@@ -2,7 +2,7 @@ import { useRouter } from "expo-router";
 import { ActivityIndicator, Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useOffresDatasBdd } from "../../../../src/hooks/useOffreDatasBdd"; // corrige le chemin selon ton projet
 
-export default function MessagesHome() {
+export default function Notifications() {
   const router = useRouter();
   const { datas, loading } = useOffresDatasBdd();
 
@@ -25,7 +25,7 @@ export default function MessagesHome() {
                 uri:
                   "https://images.unsplash.com/photo-1615813967515-e1838c1c5116?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
               }}
-              style={{ width: 70, height: 70, borderRadius: 50 }}
+              style={{ width: 80, height: 80 }}
             />
 
             <View>

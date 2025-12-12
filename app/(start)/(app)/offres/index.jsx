@@ -1,8 +1,10 @@
-import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from "react-native";
-
+import { useRouter } from "expo-router";
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useOffresDatasBdd } from "../../../../src/hooks/useOffreDatasBdd";
 
 export default function Home() {
+
+  const router = useRouter();
 
   const { datas, loading } = useOffresDatasBdd();
   
@@ -22,7 +24,11 @@ export default function Home() {
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.gapCards}>
           {datas.map((user) => (
-            <View key={user.id} style={styles.containerPoste}>
+            <Pressable
+              key={user.id}
+              style={styles.containerPoste}
+              onPress={() => router.push(`/candidatures?id=${user.id}`)}
+            >
               <View style={styles.textePoste}>
                 {/* Code de la carde à transformer en component */}
                 <View style={styles.infosDown}>
@@ -35,7 +41,7 @@ export default function Home() {
                   <Text style={{fontSize: 12, color: "gray"}}>{user.username}</Text>
                 </View>
               </View>
-            </View>
+            </Pressable>
           ))}
         </View>
       </ScrollView>

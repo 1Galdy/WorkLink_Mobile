@@ -1,4 +1,5 @@
-import { ActivityIndicator, Image, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { useRouter } from "expo-router";
+import { ActivityIndicator, Image, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { useHomeDatasBdd } from '../../../../src/hooks/useHomeDatasBdd';
 
 //Import hooks components
@@ -10,6 +11,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { theme } from "../../../../src/theme/themeGlobal";
 
 export default function Home() {
+
+  const router = useRouter();
 
   const { datas, loading } = useHomeDatasBdd();
 
@@ -41,28 +44,32 @@ export default function Home() {
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={{paddingBottom: 20, gap: 20}}>
             {datas.map((user) => (
-              <View key={user.id} style={styles.containerPoste}>
-                <View style={styles.imagePoste}>
-                  <Image
-                    source={{ uri: "https://static.ib-formation.fr/content/uploads/2024/04/15110010/tendances-developpement-web-2024-ib-cegos-1.jpg" }}
-                    style={{ width: 80, height: 80, borderRadius: 5 }}
-                  />
-                </View>
-                <View style={styles.textePoste}>
-                  {/* {datas.map((user) => (
-                    <Text key={user.id}>{user.name}</Text>
-                  ))} */}
-
-                  {/* Code de la carde à transformer en component */}
-                  <Text style={{fontWeight: "bold", fontSize: 15}}>{user.name}</Text>
-                  <Text style={{color: "gray", fontSize: 12}}>{user.address.street}</Text>
-                  <View style={styles.infosDown}>
-                    <Text style={{fontSize: 12, backgroundColor: "green", padding: 6, borderRadius: 20, color: "white"}}>{user.address.city}</Text>
-                    <Text style={{fontSize: 12}}> {user.id} jours</Text>
-                    <Text style={{fontSize: 12, color: "blue"}}>{user.username}</Text>
+              <Pressable
+                key={user.id}
+                style={styles.containerPoste}
+                onPress={() => router.push(`/candidatures?id=${user.id}`)}
+              >
+                  <View style={styles.imagePoste}>
+                    <Image
+                      source={{ uri: "https://static.ib-formation.fr/content/uploads/2024/04/15110010/tendances-developpement-web-2024-ib-cegos-1.jpg" }}
+                      style={{ width: 80, height: 80, borderRadius: 5 }}
+                    />
                   </View>
-                </View>
-              </View>
+                  <View style={styles.textePoste}>
+                    {/* {datas.map((user) => (
+                      <Text key={user.id}>{user.name}</Text>
+                    ))} */}
+
+                    {/* Code de la carde à transformer en component */}
+                    <Text style={{fontWeight: "bold", fontSize: 15}}>{user.name}</Text>
+                    <Text style={{color: "gray", fontSize: 12}}>{user.address.street}</Text>
+                    <View style={styles.infosDown}>
+                      <Text style={{fontSize: 12, backgroundColor: "green", padding: 6, borderRadius: 20, color: "white"}}>{user.address.city}</Text>
+                      <Text style={{fontSize: 12}}> {user.id} jours</Text>
+                      <Text style={{fontSize: 12, color: "blue"}}>{user.username}</Text>
+                    </View>
+                  </View>
+              </Pressable>
             ))}
           </View>
         </ScrollView>
